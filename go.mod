@@ -1,4 +1,4 @@
-module bitset32
+module github.com/pointernil/bitset32
 
 go 1.19
 
