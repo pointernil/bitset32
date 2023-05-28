@@ -8,20 +8,39 @@ type BitSet64 struct {
 	*bitset64.BitSet
 }
 
-// FIXME: too slow
-func (b *BitSet64) MaxConsecutiveOne() uint {
-	rt := uint(0)
-	sum := uint(0)
-	for i := uint(0); i <= b.Len(); i++ {
-		if b.Test(i) {
+// TODO: TestFunc
+func (b *BitSet64) MaxConsecutiveOne(start, end uint) uint {
+	return b.continueMaxCount(start, end, true)
+}
+
+func (b *BitSet64) MaxConsecutiveZero(start, end uint) uint {
+	return b.continueMaxCount(start, end, false)
+}
+
+func (b *BitSet64) continueMaxCount(start, end uint, flag bool) uint {
+	flag = !flag
+	if end > b.Len() {
+		end = b.Len()
+	}
+	if start >= b.Len() {
+		return 0
+	}
+	if start > end {
+		return 0
+	}
+	rt, sum := uint(0), uint(0)
+	for i := start; i < end; i++ {
+		if xor(flag, b.Test(i)) {
 			sum++
 			continue
 		}
-		if rt < sum {
+		if sum > rt {
 			rt = sum
 		}
 		sum = 0
 	}
-
-	return uint(rt)
+	if sum > rt {
+		rt = sum
+	}
+	return rt
 }

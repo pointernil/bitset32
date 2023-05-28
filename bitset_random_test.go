@@ -143,7 +143,7 @@ func TestBitSet(t *testing.T) {
 	res = isSameBitset(b32, b64)
 	t.Log("Compact:", res)
 	bs64 := &BitSet64{b64}
-	t.Log("Max Count:", b32.MaxConsecutiveOne(), bs64.MaxConsecutiveOne())
+	t.Log("Max Count:", b32.MaxConsecutiveOne(0, b32.Len()), bs64.MaxConsecutiveOne(0, b64.Len()))
 	t.Log("String:", b32.String() == b64.String())
 	t.Logf(rt, time.Now().Unix(), opc, opcT)
 }

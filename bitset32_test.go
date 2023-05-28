@@ -1931,3 +1931,81 @@ func TestReadFrom(t *testing.T) {
 		})
 	}
 }
+
+func TestMaxConsecutiveOne(t *testing.T) {
+	usecase := []struct {
+		In  []uint32
+		Out uint
+	}{
+		{
+			[]uint32{^uint32(0)},
+			32,
+		},
+		{
+			[]uint32{^uint32(0), uint32(1)},
+			33,
+		},
+		{
+			[]uint32{^uint32(0), uint32(0)},
+			32,
+		},
+		{
+			[]uint32{^uint32(0) ^ uint32(1<<10), uint32(0)},
+			21,
+		},
+		{
+			[]uint32{^uint32(0) ^ uint32(1<<10), ^uint32(0)},
+			53,
+		},
+		{
+			[]uint32{^uint32(0) ^ uint32(1<<10), ^uint32(0) ^ uint32(1)},
+			31,
+		},
+	}
+	for _, uc := range usecase {
+		bs := From(uc.In)
+		out := bs.MaxConsecutiveOne(0, bs.length)
+		if out != uc.Out {
+			t.Logf("input: %v, want: %v, but got: %v", uc.In, uc.Out, out)
+		}
+	}
+}
+
+func TestMaxConsecutiveZero(t *testing.T) {
+	usecase := []struct {
+		In  []uint32
+		Out uint
+	}{
+		{
+			[]uint32{uint32(0)},
+			32,
+		},
+		{
+			[]uint32{uint32(0), ^uint32(0) ^ 1},
+			33,
+		},
+		{
+			[]uint32{uint32(0), ^uint32(0)},
+			32,
+		},
+		{
+			[]uint32{uint32(0) | uint32(1<<10), ^uint32(0)},
+			21,
+		},
+		{
+			[]uint32{uint32(0) | uint32(1<<10), uint32(0)},
+			53,
+		},
+		{
+			[]uint32{uint32(0) | uint32(1<<10), uint32(1)},
+			31,
+		},
+	}
+	for _, uc := range usecase {
+		bs := From(uc.In)
+		out := bs.MaxConsecutiveZero(0, bs.length)
+		if out != uc.Out {
+			t.Logf("input: %v, want: %v, but got: %v", uc.In, uc.Out, out)
+		}
+	}
+}
